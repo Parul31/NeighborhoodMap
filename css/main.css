@@ -1,0 +1,40 @@
+.navbar-header {
+	float: left;
+	padding: 15px;
+	text-align: center;
+	width: 100%;
+}
+.navbar .navbar-brand {
+	color: white;
+}
+.navbar-brand {
+	float: none;
+}
+.small-nav {
+	width: 29.2%;
+}
+.black {
+	background-color: black;
+}
+#inline {
+	display: inline;
+}
+.form-control {
+	width: 67%;
+	display: inline-block;
+}
+#map {
+	height: 650px;
+}
+.glyphicon-align-justify {
+	color: white;
+}
+.black-back {
+	background-color: rgba(0, 0, 0, 0.86);
+	margin-left: 248px;
+}
+#hamburger {
+	width: 250px;
+	background-color: black;
+	text-align: left;
+}
