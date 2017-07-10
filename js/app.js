@@ -1,46 +1,5 @@
-//the model
+//the model-- locatins have been hard coded
 var initialLocations = [
-// 	{
-// 		title: 'Allahabad', 
-// 		location: {lat: 25.4358, lng: 81.8463}
-// 	},
-// 	{
-// 		title: 'New Delhi', 
-// 		location: {lat: 28.6139, lng: 77.2090}
-// 	},
-// 	{
-// 		title: 'Goa', 
-// 		location: {lat: 15.2993, lng: 74.1240}
-// 	},
-
-// 	{
-// 		title: 'Mumbai', 
-// 		location: {lat: 19.0760, lng: 72.8777}
-// 	},
-// 	{
-// 		title: 'Shirdi', 
-// 		location: {lat: 19.7669, lng: 74.4773}
-// 	},
-// 	{
-// 		title: 'Tirupati', 
-// 		location: {lat: 13.6288, lng: 79.4192}
-// 	},
-// 	{
-// 		title: 'Bengaluru', 
-// 		location: {lat: 12.9716, lng: 77.5946}
-// 	},
-// 	{
-// 		title: 'Jammu and Kashmir', 
-// 		location: {lat: 33.7782, lng: 76.5762}
-// 	},
-// 	{
-// 		title: 'Mysuru', 
-// 		location: {lat: 12.2958, lng: 76.6394}
-// 	},
-// 	{
-// 		title: 'Chennai', 
-// 		location: {lat: 13.0827, lng: 80.2707}
-// 	}
 	{
 		title: 'Supreme Court of India',
 		location: {lat: 28.622301, lng: 77.239372}
@@ -85,9 +44,7 @@ function initMap() {
 	var styles = [
 		{
 			featureType: 'water',
-            stylers: [
-              { color: '#19a0d8' }
-            ]
+            stylers: [{ color: '#19a0d8' }]
 		},
 		{
             featureType: 'road',
@@ -124,7 +81,9 @@ function initMap() {
         zoom: 12
 	});
 	var infoWindow = new google.maps.InfoWindow();
+	//default icon color of marker
 	var defaultIcon = makeMarkerIcon('D2D229');
+	//icon color on hover
 	var highlightedIcon = makeMarkerIcon('FFFF24');
 	for (var i = 0; i < initialLocations.length; i++) {
 		//set markers on the map
@@ -168,8 +127,7 @@ function populateInfo(marker, infoWindow) {
 		infoWindow.marker = marker;
 		var address = marker.position.lat() + ', ' + marker.position.lng();
 		//streetview for getting photos
-		var streetviewUrl = 'http://maps.googleapis.com/maps/api/streetview?size=250x200&location=' + address + '';
-		
+		var streetviewUrl = 'http://maps.googleapis.com/maps/api/streetview?size=250x200&location=' + address + '';	
 		var city = marker.title;
 		var wikiUrl = 'http://en.wikipedia.org/w/api.php?action=opensearch&search='+ city 
 						+ '&format=json&callback=wikiCallback';
@@ -178,10 +136,13 @@ function populateInfo(marker, infoWindow) {
 			url: wikiUrl,
 			dataType: "jsonp",
 			success: function(response) {
+				//list of names of places
 				var articleList = response[1];
+				//list of details of those places
 				var detailsList = response[2];
+				//filtered place is in articleList[0]
 				var article = articleList[0];
-
+				//filtered place's details is in detailsList[0]
 				var details = detailsList[0];
 				if(!details) {
 					details = '';
@@ -191,13 +152,14 @@ function populateInfo(marker, infoWindow) {
 					article = marker.title;
 					url = 'https://www.google.com/search?&q='+article;
 				}
+				//google link to more photos
 				var morePhotos = 'https://www.google.com/search?tbm=isch&q='+article;
 				//set the content of infowindow after fetching it from streetview and mediaWiki
 				infoWindow.setContent('<div style="width:252px; padding: 2%;"><h4>'+ marker.title + '</h4>' +
-											'<a href="'+morePhotos+'" title="Click for More Photos"><img src="' + streetviewUrl + '"></a>' + 
-											'<p style="text-align: justify; padding:2%;">'
-												+details+
-												'<a style="font-size: 14px;" href="' + url + '">'+'--See More</a></p>' + 
+				'<a href="'+morePhotos+'" title="Click for More Photos"><img src="' + streetviewUrl + '"></a>' + 
+				'<p style="text-align: justify; padding:2%;">'
+					+details+
+				'<a style="font-size: 14px;" href="' + url + '">'+'--See More</a></p>' + 
 									   '</div>');
 			},
 		}).fail(function() {
@@ -252,7 +214,12 @@ var ViewModel = function() {
 			});
 			return this.placeList();	
 		} else {
+			//ko.utils.arrayFilter() is used to allows us to pass 
+			//in an array and control which items are included 
+			//based on the result of the function executed on each item.
 			return ko.utils.arrayFilter(this.placeList(), function(item, index) {
+				//We pass our array of items into ko.utils.arrayFilter 
+				//and return true only when the filter condition is true
 				var match = item.title().toLowerCase().indexOf(filter) > -1;
 				if(item.title().toLowerCase().indexOf(filter) > -1) {
 					markers[index].setVisible(true);
