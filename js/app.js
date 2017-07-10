@@ -107,7 +107,7 @@ function initMap() {
         	this.setIcon(defaultIcon);
       	});
 	}	
-};
+}
 // This function takes in a COLOR, and then creates a new marker
 // icon of that color. The icon will be 21 px wide by 34 high, have an origin
 // of 0, 0 and be anchored at 10, 34).
@@ -129,8 +129,7 @@ function populateInfo(marker, infoWindow) {
 		//streetview for getting photos
 		var streetviewUrl = 'http://maps.googleapis.com/maps/api/streetview?size=250x200&location=' + address + '';	
 		var city = marker.title;
-		var wikiUrl = 'http://en.wikipedia.org/w/api.php?action=opensearch&search='+ city 
-						+ '&format=json&callback=wikiCallback';
+		var wikiUrl = 'http://en.wikipedia.org/w/api.php?action=opensearch&search='+ city + '&format=json&callback=wikiCallback';
 		//mediaWiki
 		$.ajax({
 			url: wikiUrl,
@@ -157,8 +156,7 @@ function populateInfo(marker, infoWindow) {
 				//set the content of infowindow after fetching it from streetview and mediaWiki
 				infoWindow.setContent('<div style="width:252px; padding: 2%;"><h4>'+ marker.title + '</h4>' +
 				'<a href="'+morePhotos+'" title="Click for More Photos"><img src="' + streetviewUrl + '"></a>' + 
-				'<p style="text-align: justify; padding:2%;">'
-					+details+
+				'<p style="text-align: justify; padding:2%;">'+details+
 				'<a style="font-size: 14px;" href="' + url + '">'+'--See More</a></p>' + 
 									   '</div>');
 			},
@@ -179,7 +177,7 @@ function mapErrorHandling() {
 var place = function(data) {
 	this.title = ko.observable(data.title);
 	this.location = ko.observable(data.location);
-}
+};
 //the viewModel
 var ViewModel = function() {
 	var self = this;
@@ -203,7 +201,7 @@ var ViewModel = function() {
 		}, 1200);
 		var infoWindow = new google.maps.InfoWindow();
 		populateInfo(markers[markerIndex], infoWindow);
-	}
+	};
 	this.query = ko.observable('');
 	//to filter the places and view the filtered list and markers
 	this.filterPlaces = ko.computed(function() {
@@ -230,5 +228,5 @@ var ViewModel = function() {
 			});
 		}
 	}, this);
-}
+};
 ko.applyBindings(new ViewModel());
