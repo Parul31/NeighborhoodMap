@@ -85,13 +85,13 @@ function initMap() {
 	var defaultIcon = makeMarkerIcon('D2D229');
 	//icon color on hover
 	var highlightedIcon = makeMarkerIcon('FFFF24');
-	for (var i = 0; i < initialLocations.length; i++) {
+	initialLocations.forEach(function(location, index) {
 		//set markers on the map
 		var marker = new google.maps.Marker({
-			position: initialLocations[i].location,
-			title: initialLocations[i].title,
+			position: location.location,
+			title: location.title,
 			animation: google.maps.Animation.DROP,
-			id: i,
+			id: index,
 			icon: defaultIcon,
 			map: map
 		});
@@ -106,7 +106,7 @@ function initMap() {
         marker.addListener('mouseout', function() {
         	this.setIcon(defaultIcon);
       	});
-	}	
+	})
 }
 // This function takes in a COLOR, and then creates a new marker
 // icon of that color. The icon will be 21 px wide by 34 high, have an origin
