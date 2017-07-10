@@ -106,7 +106,7 @@ function initMap() {
         marker.addListener('mouseout', function() {
         	this.setIcon(defaultIcon);
       	});
-	})
+	});
 }
 // This function takes in a COLOR, and then creates a new marker
 // icon of that color. The icon will be 21 px wide by 34 high, have an origin
