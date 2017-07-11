@@ -98,6 +98,7 @@ function initMap() {
 		markers.push(marker);
 		//open a infowindow on clicking the marker
 		marker.addListener('click', function() {
+
 			bounce(this);
 			populateInfo(this, infoWindow);
 		});
@@ -127,7 +128,9 @@ function bounce(marker) {
 	marker.setAnimation(google.maps.Animation.BOUNCE);
 	setTimeout(function() {
 		marker.setAnimation(null);
-	}, 1200);
+	}, 1400);
+	map.setZoom(13);
+	map.setCenter(marker.position);
 }
 //populateInfo() to show photo of the place and some details on the infowindow
 function populateInfo(marker, infoWindow) {
@@ -136,19 +139,21 @@ function populateInfo(marker, infoWindow) {
 		var address = marker.position.lat() + ', ' + marker.position.lng();
 		//streetview for getting photos
 		var streetviewUrl = 'http://maps.googleapis.com/maps/api/streetview?size=250x200&location=' + address + '';	
+		
 		var place = marker.title;
 		var wikiUrl = 'http://en.wikipedia.org/w/api.php?action=opensearch&search='+ place + '&format=json&callback=wikiCallback';
 		//error handling for wiki requests
-		var wikiErrorHandling = function() {
-			setTimeout(function() {
+		var wikiErrorHandling = setTimeout(function() {
+			infoWindow.setContent('<div style="width:252px; padding: 2%;"><h4>'+ place + '</h4>' +'<img src="' + streetviewUrl + '">' + 
+				'<p class="wiki" style="text-align: justify; padding:2%;"></p>' + '</div>');
 				$('.wiki').text('Failed to get wikipedia resources');
-			}, 8000);
-		};
+			}, 2500);
 		//mediaWiki
 		$.ajax({
 			url: wikiUrl,
 			dataType: "jsonp",
 			success: function(response) {
+				clearTimeout(wikiErrorHandling);
 				//list of names of places
 				var articleList = response[1];
 				//list of details of those places
@@ -165,8 +170,7 @@ function populateInfo(marker, infoWindow) {
 				'<a href="'+morePhotos+'" title="Click for More Photos"><img src="' + streetviewUrl + '"></a>' + 
 				'<p class="wiki" style="text-align: justify; padding:2%;">'+details+
 				'<a class="wiki" style="font-size: 14px;" href="' + url + '">'+'--See More</a></p>' + 
-									   '</div>');
-				clearTimeout(wikiErrorHandling);
+									   '</div>');	
 			}
 		});
 
@@ -178,6 +182,7 @@ function populateInfo(marker, infoWindow) {
 	}
 }
 function mapErrorHandling() {
+	console.log('map load problem');
 	$('#map').append('<p>Oops! Map is unavailable for now</p>');
 }
 var place = function(data) {
