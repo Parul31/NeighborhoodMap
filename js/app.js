@@ -98,6 +98,7 @@ function initMap() {
 		markers.push(marker);
 		//open a infowindow on clicking the marker
 		marker.addListener('click', function() {
+			bounce(this);
 			populateInfo(this, infoWindow);
 		});
 		marker.addListener('mouseover', function() {
@@ -121,6 +122,12 @@ function makeMarkerIcon(markerColor) {
 	  new google.maps.Size(21,34));
 	return markerImage;
 }
+function bounce(marker) {
+	marker.setAnimation(google.maps.Animation.BOUNCE);
+	setTimeout(function() {
+		marker.setAnimation(null);
+	}, 1200);
+}
 //populateInfo() to show photo of the place and some details on the infowindow
 function populateInfo(marker, infoWindow) {
 	if(infoWindow.marker != marker) {
@@ -128,8 +135,14 @@ function populateInfo(marker, infoWindow) {
 		var address = marker.position.lat() + ', ' + marker.position.lng();
 		//streetview for getting photos
 		var streetviewUrl = 'http://maps.googleapis.com/maps/api/streetview?size=250x200&location=' + address + '';	
-		var city = marker.title;
-		var wikiUrl = 'http://en.wikipedia.org/w/api.php?action=opensearch&search='+ city + '&format=json&callback=wikiCallback';
+		var place = marker.title;
+		var wikiUrl = 'http://en.wikipedia.org/w/api.php?action=opensearch&search='+ place + '&format=json&callback=wikiCallback';
+		//error handling for wiki requests
+		var wikiErrorHandling = function() {
+			setTimeout(function() {
+				$('.wiki').text('Failed to get wikipedia resources');
+			}, 8000);
+		};
 		//mediaWiki
 		$.ajax({
 			url: wikiUrl,
@@ -143,25 +156,17 @@ function populateInfo(marker, infoWindow) {
 				var article = articleList[0];
 				//filtered place's details is in detailsList[0]
 				var details = detailsList[0];
-				if(!details) {
-					details = '';
-				}
 				var url = 'http://en.wikipedia.org/wiki/'+article;
-				if(!article) {
-					article = marker.title;
-					url = 'https://www.google.com/search?&q='+article;
-				}
 				//google link to more photos
 				var morePhotos = 'https://www.google.com/search?tbm=isch&q='+article;
 				//set the content of infowindow after fetching it from streetview and mediaWiki
 				infoWindow.setContent('<div style="width:252px; padding: 2%;"><h4>'+ marker.title + '</h4>' +
 				'<a href="'+morePhotos+'" title="Click for More Photos"><img src="' + streetviewUrl + '"></a>' + 
-				'<p style="text-align: justify; padding:2%;">'+details+
-				'<a style="font-size: 14px;" href="' + url + '">'+'--See More</a></p>' + 
+				'<p class="wiki" style="text-align: justify; padding:2%;">'+details+
+				'<a class="wiki" style="font-size: 14px;" href="' + url + '">'+'--See More</a></p>' + 
 									   '</div>');
-			},
-		}).fail(function() {
-			alert('failed');
+				clearTimeout(wikiErrorHandling);
+			}
 		});
 
 		infoWindow.open(map, marker);
@@ -195,10 +200,7 @@ var ViewModel = function() {
 				return;
 			}
 		});
-		markers[markerIndex].setAnimation(google.maps.Animation.BOUNCE);
-		setTimeout(function() {
-			markers[markerIndex].setAnimation(null);
-		}, 1200);
+		bounce(markers[markerIndex]);
 		var infoWindow = new google.maps.InfoWindow();
 		populateInfo(markers[markerIndex], infoWindow);
 	};
