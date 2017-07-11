@@ -115,22 +115,25 @@ function initMap() {
 // of 0, 0 and be anchored at 10, 34).
 function makeMarkerIcon(markerColor) {
 	var markerImage = new google.maps.MarkerImage(
-	  'http://chart.googleapis.com/chart?chst=d_map_spin&chld=1.15|0|'+ markerColor +
-	  '|40|_|%E2%80%A2',
-	  new google.maps.Size(21, 34),
-	  new google.maps.Point(0, 0),
-	  new google.maps.Point(10, 34),
-	  new google.maps.Size(21,34));
+		  'http://chart.googleapis.com/chart?chst=d_map_spin&chld=1.15|0|'+ markerColor +
+		  '|40|_|%E2%80%A2',
+		  new google.maps.Size(21, 34),
+		  new google.maps.Point(0, 0),
+		  new google.maps.Point(10, 34),
+		  new google.maps.Size(21,34));
 	return markerImage;
 }
 //This function takes the current marker and setAnimation as BOUNCE
 function bounce(marker) {
+	//when marker is clicked, map gets zoom in
+	map.setZoom(13);
+	map.setCenter(marker.position);
+	//setAnimation BOUNCE
 	marker.setAnimation(google.maps.Animation.BOUNCE);
 	setTimeout(function() {
 		marker.setAnimation(null);
 	}, 1400);
-	map.setZoom(13);
-	map.setCenter(marker.position);
+	
 }
 //populateInfo() to show photo of the place and some details on the infowindow
 function populateInfo(marker, infoWindow) {
@@ -147,7 +150,7 @@ function populateInfo(marker, infoWindow) {
 			infoWindow.setContent('<div style="width:252px; padding: 2%;"><h4>'+ place + '</h4>' +'<img src="' + streetviewUrl + '">' + 
 				'<p class="wiki" style="text-align: justify; padding:2%;"></p>' + '</div>');
 				$('.wiki').text('Failed to get wikipedia resources');
-			}, 2500);
+			}, 5000);
 		//mediaWiki
 		$.ajax({
 			url: wikiUrl,
@@ -178,11 +181,13 @@ function populateInfo(marker, infoWindow) {
 		 
 		infoWindow.addListener('closeclick', function() {
 			infoWindow.marker = null;
+			//when infowindow is closed, the map zooms out again
+			map.setZoom(12);
+			map.setCenter({lat: 28.613939, lng: 77.209021});
 		});
 	}
 }
 function mapErrorHandling() {
-	console.log('map load problem');
 	$('#map').append('<p>Oops! Map is unavailable for now</p>');
 }
 var place = function(data) {
