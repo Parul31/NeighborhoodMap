@@ -122,6 +122,7 @@ function makeMarkerIcon(markerColor) {
 	  new google.maps.Size(21,34));
 	return markerImage;
 }
+//This function takes the current marker and setAnimation as BOUNCE
 function bounce(marker) {
 	marker.setAnimation(google.maps.Animation.BOUNCE);
 	setTimeout(function() {
